@@ -42,6 +42,19 @@ export function BookingsManager() {
     }
   };
 
+  const handleDelete = async (bookingId: string) => {
+    if (window.confirm('Are you sure you want to delete this booking?')) {
+      try {
+        await bookings.delete(bookingId);
+        // Refresh bookings list
+        loadBookings();
+      } catch (error) {
+        console.error('Failed to delete booking:', error);
+        alert('Failed to delete booking');
+      }
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -79,17 +92,21 @@ export function BookingsManager() {
                   {booking.status}
                 </Badge>
               </TableCell>
-              <TableCell>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => handleStatusUpdate(
-                    booking._id, 
-                    booking.status === 'pending' ? 'confirmed' : 'pending'
-                  )}
+              <TableCell className="flex items-center gap-2">
+                <select 
+                  value={booking.status} 
+                  onChange={(e) => handleStatusUpdate(booking._id, e.target.value as Booking['status'])}
+                  className="bg-neutral-800 rounded p-1"
                 >
-                  {booking.status === 'pending' ? 'Confirm' : 'Unconfirm'}
-                </Button>
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                </select>
+                <button 
+                  onClick={() => handleDelete(booking._id)}
+                  className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded"
+                >
+                  Delete
+                </button>
               </TableCell>
             </TableRow>
           ))}

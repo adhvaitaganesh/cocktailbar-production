@@ -56,4 +56,35 @@ router.post('/login', async (req: Request, res: Response) => {
   }
 });
 
+router.get('/check-status', async (req: Request, res: Response) => {
+  try {
+    // Get token from cookie
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).send({ message: 'No token found' });
+    }
+
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as { customerId: string };
+    const customer = await Customer.findById(decoded.customerId);
+    
+    if (!customer) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    res.send({ user: customer });
+  } catch (error) {
+    res.status(401).send({ message: 'Invalid token' });
+  }
+});
+
+router.post('/logout', (_req: Request, res: Response) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  });
+  res.send({ message: 'Logged out successfully' });
+});
+
 export default router; 

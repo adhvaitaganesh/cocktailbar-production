@@ -48,6 +48,13 @@ export const auth = {
     api.post<AuthResponse>('/auth/register', credentials),
   verifyCredentials: (credentials: AuthCredentials) => 
     api.post<AuthResponse>('/auth/verify-credentials', credentials),
+  checkStatus: () => 
+    api.get<AuthResponse>('/auth/check-status'),
+  logout: async () => {
+    const response = await api.post('/auth/logout');
+    Cookies.remove('token', { path: '/' });
+    return response;
+  },
 };
 
 export const bookings = {
@@ -57,6 +64,8 @@ export const bookings = {
     api.get<Booking[]>('/bookings/getBookings'),
   updateStatus: (id: string, status: Booking['status']) => 
     api.patch<Booking>(`/bookings/${id}`, { status }),
+  delete: (id: string) => 
+    api.delete<{ message: string }>(`/bookings/${id}`),
 };
 
 export const requests = {

@@ -5,6 +5,7 @@ import { Logo } from '@/components/logo';
 import Link from 'next/link';
 import { AnnouncementProvider } from '@/components/ActiveAnnouncementContext';
 import {AdminProvider} from '@/contexts/AdminContext'
+import { AuthProvider } from '@/contexts/AuthContext';
 
 const playfair = Playfair_Display({ subsets: ['latin'] });
 const inter = Inter({ subsets: ['latin'] });
@@ -23,16 +24,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={playfair.className} suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
-        <header className="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-sm">
-          <div className="max-w-5xl mx-auto px-4 py-4">
-            <Link href="/" className="inline-block">
-              <Logo />
-            </Link>
-          </div>
-        </header>
-        <AdminProvider>
-        <AnnouncementProvider>{children}</AnnouncementProvider>
-        </AdminProvider>
+        <AuthProvider>
+          <header className="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-sm">
+            <div className="max-w-5xl mx-auto px-4 py-4">
+              <Link href="/" className="inline-block">
+                <Logo />
+              </Link>
+            </div>
+          </header>
+          <AdminProvider>
+            <AnnouncementProvider>{children}</AnnouncementProvider>
+          </AdminProvider>
+        </AuthProvider>
       </body>
     </html>
   );

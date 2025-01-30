@@ -22,8 +22,11 @@ import { Testimonials } from '@/components/Testimonials';
 import { useAdmin } from "@/contexts/AdminContext";
 import { ActiveAnnouncements } from '@/components/ActiveAnnouncements';
 import api from '@/src/services/api';
+import { useAuth } from '../contexts/AuthContext';
+import { LoginDialog } from '@/components/LoginDialog';
 
 export default function Home() {
+  const { isAuthenticated, user } = useAuth();
   const { addBooking, addRequest } = useAdmin();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [bookingForm, setBookingForm] = useState({
@@ -37,11 +40,22 @@ export default function Home() {
     email: "",
     message: "",
   });
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
 
   const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAuthenticated) {
+      setShowLoginDialog(true);
+      return;
+    }
     try {
-      await api.post('/bookings/new', bookingForm);
+      console.log(user?._id);
+      await api.post('/bookings/new', {
+        ...bookingForm,
+        customerId: user?._id
+
+        //just using customerId for now
+      });
       // Reset form
       setBookingForm({ name: "", date: "", time: "", guests: 0 });
       // Show success message to user
@@ -70,7 +84,17 @@ export default function Home() {
     <main className="min-h-screen bg-[#1a1814]">
       <ActiveAnnouncements />
       <AdminButton />
-      <Header />
+      <Header isAuthenticated={isAuthenticated} user={user} />
+      
+      {showLoginDialog && (
+        <LoginDialog 
+          onClose={() => setShowLoginDialog(false)}
+          onSuccess={() => {
+            setShowLoginDialog(false);
+            // Optionally re-trigger booking submission
+          }}
+        />
+      )}
 
       {/* Hero Section */}
       <section className="relative h-screen">

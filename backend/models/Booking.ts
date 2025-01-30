@@ -13,8 +13,7 @@ export interface Booking {
 const bookingSchema = new mongoose.Schema<Booking>({
   customerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Customer',
-    default: null
+    ref: 'Customer'
   },
   name: {
     type: String,

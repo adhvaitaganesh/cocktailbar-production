@@ -1,7 +1,7 @@
 export interface AuthUser {
     _id: string;
     email: string;
-    role: 'admin' | 'user';
+    role: 'admin' | 'customer';
   }
   
   export interface AuthCredentials {
