@@ -88,11 +88,8 @@ export default function Home() {
       
       {showLoginDialog && (
         <LoginDialog 
-          onClose={() => setShowLoginDialog(false)}
-          onSuccess={() => {
-            setShowLoginDialog(false);
-            // Optionally re-trigger booking submission
-          }}
+          open={showLoginDialog}
+          onOpenChange={setShowLoginDialog}
         />
       )}
 
@@ -285,7 +282,7 @@ export default function Home() {
             Get in Touch
           </h2>
           <p className="text-amber-100/70 mb-8">
-            Available for events throughout New York City and the Tri-State area
+            Available for events throughout Saarbrücken and Luxembourg
             <br />
             Weddings • Corporate Events • Private Parties
             <br />

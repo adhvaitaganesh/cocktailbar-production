@@ -12,7 +12,7 @@ export function ActiveAnnouncements() {
         .filter(announcement => announcement && announcement.active)
         .map(announcement => (
           <SpecialAnnouncement 
-            key={announcement.id} 
+            key={announcement._id} 
             announcement={announcement} 
           />
         ))}

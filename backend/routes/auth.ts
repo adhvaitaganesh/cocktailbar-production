@@ -58,33 +58,51 @@ router.post('/login', async (req: Request, res: Response) => {
 
 router.get('/check-status', async (req: Request, res: Response) => {
   try {
-    // Get token from cookie
-    const token = req.cookies.token;
+    // Get token from cookie or Authorization header
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    
     if (!token) {
       return res.status(401).send({ message: 'No token found' });
     }
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as { customerId: string };
-    const customer = await Customer.findById(decoded.customerId);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as { customerId: string, role: string };
+    
+    // Find customer with role
+    const customer = await Customer.findById(decoded.customerId).select('-password');
     
     if (!customer) {
       return res.status(404).send({ message: 'User not found' });
     }
 
-    res.send({ user: customer });
+    // Send response with both user data and token
+    res.send({ 
+      user: customer,
+      isAuthenticated: true 
+    });
+
   } catch (error) {
-    res.status(401).send({ message: 'Invalid token' });
+    console.error('Check status error:', error);
+    res.status(401).send({ 
+      message: 'Invalid token',
+      isAuthenticated: false 
+    });
   }
 });
 
 router.post('/logout', (_req: Request, res: Response) => {
-  res.clearCookie('token', {
+  res.cookie('token', '', { 
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax'
+    sameSite: 'lax',
+    maxAge: 0  // Expire immediately
   });
-  res.send({ message: 'Logged out successfully' });
+  
+  res.status(200).send({ 
+    message: 'Logged out successfully',
+    isAuthenticated: false 
+  });
 });
 
 export default router; 

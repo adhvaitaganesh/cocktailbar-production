@@ -11,6 +11,8 @@ import Cookies from 'js-cookie'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
 
+//let isAuthenticated = false;
+
 const api = axios.create({
   baseURL: API_URL,
 });
@@ -41,6 +43,7 @@ export const auth = {
         expires: 7, // Cookie expires in 7 days
         path: '/' 
       });
+      //isAuthenticated = true;
     }
     return response;
   },
@@ -53,6 +56,8 @@ export const auth = {
   logout: async () => {
     const response = await api.post('/auth/logout');
     Cookies.remove('token', { path: '/' });
+    response.headers.authorization = '';
+    //isAuthenticated = false;
     return response;
   },
 };

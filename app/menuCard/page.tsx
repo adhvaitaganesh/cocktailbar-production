@@ -1,9 +1,12 @@
 
 import Image from 'next/image'
 import Header from '@/components/header'
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Menu() {
-  const cocktails = [
+  const { isAuthenticated, user } = useAuth();
+  const cocktails = 
+  [
     {
       name: "Bohemian Sunset",
       description: "A mesmerizing blend of aged rum, absinthe, and exotic fruit juices",
@@ -21,7 +24,7 @@ export default function Menu() {
 
   return (
     <main className="min-h-screen bg-[#1a1814]">
-      <Header />
+      <Header isAuthenticated={isAuthenticated} user={user} />
       <div className="max-w-7xl mx-auto pt-28 px-6">
         <h1 className="text-4xl md:text-6xl text-center font-serif text-[#cda45e] mb-16">
           Our Signature Cocktails

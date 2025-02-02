@@ -1,39 +1,36 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { announcements } from "@/src/services/api";
+import { Announcement } from "@/src/services/types";
 
-interface Announcement {
-  id: number;
-  title: string;
-  subtitle: string;
-  imageUrl: string;
-  offerTitle: string;
-  offerDescription: string;
-  promoCode: string;
-  active: boolean;
+interface AnnouncementContextType {
+  announcements: Announcement[];
 }
 
-type AnnouncementContextType = {
-  announcements: Announcement[];
-  setAnnouncements: (announcements: Announcement[]) => void;
-};
-
-const AnnouncementContext = createContext<AnnouncementContextType | undefined>(undefined);
+const AnnouncementContext = createContext<AnnouncementContextType>({ announcements: [] });
 
 export function AnnouncementProvider({ children }: { children: React.ReactNode }) {
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [announcementsList, setAnnouncementsList] = useState<Announcement[]>([]);
+
+  useEffect(() => {
+    const loadAnnouncements = async () => {
+      try {
+        const response = await announcements.getAll();
+        setAnnouncementsList(response.data);
+      } catch (error) {
+        console.error('Failed to load announcements:', error);
+      }
+    };
+
+    loadAnnouncements();
+  }, []);
 
   return (
-    <AnnouncementContext.Provider value={{ announcements, setAnnouncements }}>
+    <AnnouncementContext.Provider value={{ announcements: announcementsList }}>
       {children}
     </AnnouncementContext.Provider>
   );
 }
 
-export function useAnnouncements(): AnnouncementContextType {
-  const context = useContext(AnnouncementContext);
-  if (!context) {
-    throw new Error('useAnnouncements must be used within an AnnouncementProvider');
-  }
-  return context;
-}
+export const useAnnouncements = () => useContext(AnnouncementContext);

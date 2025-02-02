@@ -48,13 +48,7 @@ export function SpecialAnnouncement({
           <DialogTitle className="text-2xl font-serif text-amber-900">
             {announcement.title}
           </DialogTitle>
-          <Button
-            variant="ghost"
-            className="absolute right-4 top-4 rounded-full p-2 h-auto"
-            onClick={() => setIsOpen(false)}
-          >
-            <X className="h-4 w-4 text-amber-900" />
-          </Button>
+          
         </DialogHeader>
         <div className="space-y-4">
           <div className="relative h-40 overflow-hidden rounded-lg">

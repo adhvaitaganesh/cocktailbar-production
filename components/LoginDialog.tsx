@@ -1,15 +1,18 @@
+'use client';
+
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useAuth } from "@/contexts/AuthContext";
+import { auth } from '@/src/services/api';
 
 interface LoginDialogProps {
-  onClose: () => void;
-  onSuccess: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export function LoginDialog({ onClose, onSuccess }: LoginDialogProps) {
+export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
   const { login, register } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState('');
@@ -27,7 +30,7 @@ export function LoginDialog({ onClose, onSuccess }: LoginDialogProps) {
 
     try {
       if (isLogin) {
-        await login(formData.email, formData.password);
+        await auth.login({ email: formData.email, password: formData.password });
       } else {
         if (formData.password !== formData.confirmPassword) {
           setError('Passwords do not match');
@@ -38,7 +41,8 @@ export function LoginDialog({ onClose, onSuccess }: LoginDialogProps) {
           password: formData.password
         });
       }
-      onSuccess();
+      onOpenChange(false);
+      window.location.reload();
     } catch (err: any) {
       setError(err.response?.data?.message || 'An error occurred');
     } finally {
@@ -47,7 +51,7 @@ export function LoginDialog({ onClose, onSuccess }: LoginDialogProps) {
   };
 
   return (
-    <Dialog open={true} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] bg-[#1a1814] text-amber-100">
         <DialogHeader>
           <DialogTitle>{isLogin ? 'Login' : 'Register'}</DialogTitle>
