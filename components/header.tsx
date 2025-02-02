@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Logo } from './logo';
+import { Logo23 } from './logo23';
 import { Button } from '@/components/ui/button';
 import { AuthUser } from '@/src/services/types';
 import { useState } from 'react';
@@ -18,7 +19,7 @@ export default function Header({ isAuthenticated, user }: HeaderProps) {
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#1a1814]/95 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <Link href="/" className="relative">
-          <Logo />
+          <Logo23 />
         </Link>
 
         <nav>
